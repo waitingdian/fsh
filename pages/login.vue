@@ -16,7 +16,7 @@
           </el-carousel>
         </no-ssr>
       </div>
-      <div v-show="false" class="login-container">
+      <div class="login-container" v-loading="loading">
         <h2 class="f-tac fsh-f-222 f-fs32 f-fwb">欢迎登陆</h2>
         <ul>
           <li>
@@ -145,11 +145,11 @@
         </span>
       </div>
       <p class="p-t-30">人气大师任务平台 备案号: ICP:</p>
-
     </footer>
   </div>
 </template>
 <script>
+  import {login} from '@/pages/api/user'
   export default {
     name: 'login',
     components: {
@@ -169,23 +169,43 @@
           userName: '',
           passWord: ''
         },
-        showEwm: false
+        showEwm: false,
+        loading: false
       }
     },
     methods: {
+      getParams() {
+        return {
+          username: this.loginForm.userName,
+          password: this.loginForm.passWord
+        }
+      },
+      async getAdminList() {
+        this.loading = true
+        let res = await getAdminList(this.queryParams)
+        this.tableData = res.data.list
+        this.PAGINATION.total = res.data.count
+        this.loading = false
+      },
+      async login() {
+        this.loading = true
+        let res = await login(this.queryParams)
+        this.loading = false
+      },
       submintForm () {
-        if (!this.submintForm.userName) {
+        console.log('111')
+        console.log(this.loginForm.userName)
+        if (!this.loginForm.userName) {
           this.errorUser.text = '请输入账号'
           return false
         }
-        if (!this.submintForm.passWord) {
+        console.log('111')
+        if (!this.loginForm.passWord) {
           this.errorPass.text = '请输入密码'
           return false
         }
-        this.$axios.$post('', params).then((res) => {
-          console.log(res)
-        }).catch(() => {
-        })
+        console.log('111')
+        this.login()
       }
     },
     mounted () {
