@@ -148,10 +148,15 @@
       },
       getOrderList () {
         this.loading = true
+        let periodStart = ''
         if (this.searchForm.periodStart) {
-          this.searchForm.periodStart = new Date()
+          periodStart = this.format(this.searchForm.periodStart, "yyyy-MM-dd hh:mm:ss")
         }
-        let queryString = `limit=${this.pageInfo.pageSize}&offset=${this.pageInfo.current}&status=${this.searchForm.status}&period_start=${this.searchForm.periodStart}&period_end=${this.searchForm.periodEnd}`
+        let periodEnd = ''
+        if (this.searchForm.periodEnd) {
+          periodEnd = this.format(this.searchForm.periodEnd, "yyyy-MM-dd hh:mm:ss")
+        }
+        let queryString = `limit=${this.pageInfo.pageSize}&offset=${this.pageInfo.current}&status=${this.searchForm.status}&period_start=${periodStart}&period_end=${periodEnd}`
         this.$axios.$get(`${this.$store.state.baseUrl}order/list?${queryString}`).then((res) => {
           this.loading = false
           if (res.code == 200) {
@@ -166,6 +171,27 @@
         }).catch(() => {
           this.loading = false
         })
+      },
+      format(date, fmt) {
+        var that = new Date(date)
+        var o = {
+          "M+" : that.getMonth()+1,                 //月份
+          "d+" : that.getDate(),                    //日
+          "h+" : that.getHours(),                   //小时
+          "m+" : that.getMinutes(),                 //分
+          "s+" : that.getSeconds(),                 //秒
+          "q+" : Math.floor((that.getMonth()+3)/3), //季度
+          "S"  : that.getMilliseconds()             //毫秒
+        };
+        if(/(y+)/.test(fmt)) {
+          fmt=fmt.replace(RegExp.$1, (that.getFullYear()+"").substr(4 - RegExp.$1.length));
+        }
+        for(var k in o) {
+          if(new RegExp("("+ k +")").test(fmt)){
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+          }
+        }
+        return fmt;
       }
     },
     mounted () {
