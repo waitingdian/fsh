@@ -17,18 +17,8 @@
         </no-ssr>
       </div>
       <div class="register-container" v-loading="loading">
-        <h2 class="f-tac fsh-f-222 f-fs32 f-fwb">注册</h2>
+        <h2 class="f-tac fsh-f-222 f-fs32 f-fwb">忘记密码</h2>
         <ul v-loading="loading">
-          <li>
-            <span class="f-fs16 label">邀请码</span>
-            <input type="text" @change="inviteError = ''" v-model="registerForm.invite_code" placeholder="请输入邀请码">
-            <p class="error-txt" maxlength="12" v-show="inviteError">{{ inviteError }}</p>
-          </li>
-          <li>
-            <span class="f-fs16 label">用户名</span>
-            <input type="text" @change="nameError = ''" maxlength="50" v-model="registerForm.username" placeholder="请输入用户名">
-            <p class="error-txt" v-show="nameError">{{ nameError }}</p>
-          </li>
           <li>
             <span class="f-fs16 label">手机号</span>
             <input type="text" @change="phoneError = ''" maxlength="11" v-model="registerForm.phone" placeholder="请输入手机号">
@@ -46,18 +36,18 @@
           </li>
           <li>
             <span class="f-fs16 label">密码</span>
-            <input type="text" @change="passwordError1 = ''" maxlength="16" v-model="registerForm.password" placeholder="请输入登录密码">
+            <input type="password" autocomplete="new-password" @change="passwordError1 = ''" maxlength="16" v-model="registerForm.password" placeholder="请输入登录密码">
             <p class="error-txt" v-show="passwordError1">{{ passwordError1 }}</p>
           </li>
           <li>
             <span class="f-fs16 label">确认密码</span>
-            <input type="text" @change="passwordError2 = ''" maxlength="16" v-model="registerForm.password2" placeholder="请再输一次">
+            <input type="password" autocomplete="new-password" @change="passwordError2 = ''" maxlength="16" v-model="registerForm.password2" placeholder="请再输一次">
             <p class="error-txt" v-show="passwordError2">{{ passwordError2 }}</p>
           </li>
           <no-ssr>
-            <el-button style="width: 100%;margin-top:40px;" @click="register" type="primary">注册</el-button>
+            <el-button style="width: 100%;margin-top:40px;" @click="editPwd" type="primary">保存</el-button>
           </no-ssr>
-          <p class="p-t-20 f-tar">已有账号? <span class="fsh-f-c f-csp iconfont">点击登录&#xe70b;</span></p>
+          <p class="p-t-20 f-tar"><span class="fsh-f-c f-csp iconfont">立即登录 <span class="f-fs12">&#xe70b;</span> </span></p>
         </ul>
       </div>
       <article class="article1 f-tac p-t-60 p-b-70">
@@ -189,8 +179,6 @@
         loading: false,
         text: '获取验证码',
         userInviteCode: '',
-        inviteError: '',
-        nameError: '',
         phoneError: '',
         veriError: '',
         passwordError1: '',
@@ -207,15 +195,7 @@
           }
         })
       },
-      register () {
-        if (!this.registerForm.invite_code) {
-          this.inviteError = '邀请码不能为空'
-          return false
-        }
-        if (!this.registerForm.username) {
-          this.nameError = '用户名不能为空'
-          return false
-        }
+      editPwd () {
         if (!this.registerForm.phone) {
           this.phoneError = '手机号不能为空'
           return false
@@ -224,7 +204,11 @@
           this.phoneError = '请输入11位手机号'
           return false
         }
-        if (!this.registerForm.verification_code || this.registerForm.verification_code.length < 6) {
+        if (!this.registerForm.verification_code) {
+          this.veriError = '请输入验证码'
+          return false
+        }
+        if (this.registerForm.verification_code.length < 6) {
           this.veriError = '请输入6位验证码'
           return false
         }
@@ -246,22 +230,16 @@
         }
         let params = {
           phone: this.registerForm.phone,
-          username: this.registerForm.username,
-          password: this.registerForm.password,
+          new_password: this.registerForm.password,
           verification_code: this.registerForm.verification_code,
-          invite_code: this.registerForm.invite_code
-        }
-        var reg = new RegExp("^\d$");
-        if (reg.test(this.registerForm.userInviteCode)) {
-          params.user_invite_code = this.registerForm.userInviteCode
         }
         this.loading = true
-        this.$axios.$post(`${this.$store.state.baseUrl}user/register`, params).then((res) => {
+        this.$axios.$post(`${this.$store.state.baseUrl}user/editPwd`, params).then((res) => {
           this.loading = false
           if (res.code ==200) {
-            this.$messge.success('注册成功')
+            this.$messge.success('修改成功')
             setTimeout(() => {
-              this.$router.replace('/home')
+              this.$router.replace('/login')
             })
           } else {
             this.$message.error(res.msg)
@@ -272,7 +250,6 @@
       }
     },
     mounted () {
-      this.userInviteCode = this.$route.query.user_invite_code
     }
   }
 </script>
@@ -300,7 +277,7 @@
         right: 10%;
         padding: 35px;
         width: 450px;
-        height: 600px;
+        height: 480px;
         min-height: 430px;
         border-radius: 4px;
         box-shadow: 1px 1px 1px #f8f8f8;
@@ -314,7 +291,7 @@
           padding: 18px 10px 8px 0;
           border-bottom: 1px solid #ecebeb;
           input{
-            width: 300px;
+            width: 260px;
             border: none;
             outline: none;
             padding: 10px 30px;

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <Header v-if="$route.path!='/login'&& $route.path!='/register'&& $route.path!='/forget'"></Header>
-    <div :class="{'container-1200':($route.path!='/login'&& $route.path!='/register'&& $route.path!='/forget')}">
-      <Aside v-if="$route.path!='/login' && $route.path!='/register'&& $route.path!='/forget'"></Aside>
-      <nuxt :class="{'m-l-290': ($route.path!='/login' && $route.path!='/register'&& $route.path!='/forget')}"/>
+    <Header v-if="haveMenu"></Header>
+    <div :class="{'container-1200': haveMenu}">
+      <Aside v-if="haveMenu"></Aside>
+      <nuxt :class="{'m-l-290': haveMenu}"/>
     </div>
   </div>
 </template>
@@ -18,10 +18,21 @@
     },
     data() {
       return {
+        haveMenu: false,
+        noMenuList: ['/login', '/register', '/forget']
       }
     },
     methods: {},
     mounted () {
+      if (this.$route) {
+        let showMenu = true
+        this.noMenuList.forEach(item => {
+          if (this.$route.path.indexOf(item) !== -1) {
+            showMenu = false
+          }
+        })
+        this.haveMenu = showMenu
+      }
     }
   }
 </script>

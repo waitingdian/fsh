@@ -5,16 +5,22 @@
       <p class="p-t-25 f-fwb p-b-10">选择订单 <i class="el-icon-arrow-right"></i></p>
       <no-ssr>
         <el-form :inline="true" :model="searchForm" label-width="80px">
-          <el-form-item label="日期" label-width="50px">
-            <DateRangePicker
-              :width="150"
-              :startTime.sync="searchForm.periodStart"
-              :endTime.sync="searchForm.periodEnd"
-              ref="dateRangerPicker">
-            </DateRangePicker>
+          <el-form-item label="开始日期" label-width="80px">
+            <el-date-picker
+              v-model="searchForm.periodStart"
+              type="date"
+              placeholder="开始日期">
+            </el-date-picker>
           </el-form-item>
-          <el-form-item label="订单类型">
-            <el-select v-model="searchForm.type" placeholder="请选择订单类型">
+          <el-form-item label="结束日期" label-width="80px">
+            <el-date-picker
+              v-model="searchForm.periodEnd"
+              type="date"
+              placeholder="结束日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="订单状态">
+            <el-select v-model="searchForm.type" placeholder="请选择订单状态">
               <el-option v-for="item in typeList"
                          :key="item.value"
                          :label="item.name"
@@ -23,7 +29,7 @@
             </el-select>
           </el-form-item>
           <el-form-item class="f-fr p-r-50">
-            <el-button type="primary">查询</el-button>
+            <el-button type="primary" @click="getOrderList">查询</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -125,7 +131,7 @@
         },
         tableData: [],
         pageInfo: {
-          current: 1,
+          current: 0,
           pageSize: 20,
           total: 0
         }
@@ -133,8 +139,8 @@
     },
     methods: {
       goDetail (id) {
-        location.href = `order/detail?orderId=${id}`
-        // this.$router.push(`order/detail?orderId=${id}`)
+        // location.href = `order/detail?orderId=${id}`
+        this.$router.push({path: 'order/detail', query: {orderId: id}})
       },
       handleCurrentChange (val) {
         console.log(val)
@@ -142,10 +148,16 @@
       },
       getOrderList () {
         this.loading = true
+        if (this.searchForm.periodStart) {
+          this.searchForm.periodStart = new Date()
+        }
         let queryString = `limit=${this.pageInfo.pageSize}&offset=${this.pageInfo.current}&status=${this.searchForm.status}&period_start=${this.searchForm.periodStart}&period_end=${this.searchForm.periodEnd}`
         this.$axios.$get(`${this.$store.state.baseUrl}order/list?${queryString}`).then((res) => {
           this.loading = false
           if (res.code == 200) {
+            res.data.items.forEach((item) => {
+              item.id = item.id.toString()
+            })
             this.tableData = res.data.items || []
             this.pageInfo.total = res.data.page.cur_page
           } else {

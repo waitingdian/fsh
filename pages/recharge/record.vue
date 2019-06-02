@@ -2,7 +2,7 @@
   <div class="order">
     <Nav :navs="navs"></Nav>
     <div class="content">
-      <p class="p-t-25 f-fwb p-b-10">推广链接 <i class="el-icon-arrow-right"></i></p>
+      <p class="p-t-25 f-fwb p-b-10">充值记录 <i class="el-icon-arrow-right"></i></p>
       <no-ssr>
         <el-form :inline="true" :model="rechargeForm" label-width="80px">
           <el-form-item label="开始日期">

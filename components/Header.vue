@@ -53,7 +53,7 @@
         localStorage.removeItem('userInfo')
         this.$message.success("退出成功")
         setTimeout(() => {
-          this.$router.replace('/login')
+          location.replace('/login')
         }, 500)
       }
     },

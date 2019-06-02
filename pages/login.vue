@@ -20,23 +20,25 @@
         <h2 class="f-tac fsh-f-222 f-fs32 f-fwb">欢迎登陆</h2>
         <ul>
           <li>
-            <span class="f-fs16">账号</span>
+            <span class="f-fs16 label">账号</span>
             <input type="text" @change="phoneError=''" maxlength="11" v-model="loginForm.userName" placeholder="请输入绑定手机号">
             <p class="error-txt" v-show="phoneError">{{ phoneError }}</p>
           </li>
           <li>
-            <span class="f-fs16">密码</span>
-            <input type="text" @change="passError=''" maxlength="16" v-model="loginForm.passWord" placeholder="请输入登录密码">
+            <span class="f-fs16 label">密码</span>
+            <input type="password" autocomplete="new-password" @change="passError=''" maxlength="16" v-model="loginForm.passWord" placeholder="请输入登录密码">
             <p class="error-txt" v-show="passError" >{{ passError }}</p>
           </li>
           <p class="p-t-25 clearfix">
-            <span class="remember">记住我</span>
-            <span class="forget f-fr">忘记密码</span>
+
+            <a class="forget f-fr" href="/forget">忘记密码?</a>
           </p>
           <no-ssr>
             <el-button style="width: 100%;margin-top:40px;" @click="login" type="primary">登录</el-button>
           </no-ssr>
-          <p class="p-t-20 f-tar">没有账号? <span class="fsh-f-c f-csp">立即注册&#xe70b;</span></p>
+          <p class="p-t-20 f-tar">没有账号?
+            <a href="/register" class="fsh-f-c f-csp iconfont">立即注册 <span class="f-fs12">&#xe70b;</span></a>
+          </p>
         </ul>
       </div>
       <article class="article1 f-tac p-t-60 p-b-70">
@@ -136,7 +138,7 @@
     <footer class="f-tac">
       <div class="top p-t-35">
         <span class="f-ib f-vam">客服中心</span>
-        <span class="line f-ib f-vam">&#xe63a;</span>
+        <span class="line f-ib f-vam iconfont">&#xe63a;</span>
         <span class="f-ib f-vam f-pr" @mouseenter="showEwm = true" @mouseleave="showEwm = false">
          <img src="http://pic40.nipic.com/20140412/18428321_144447597175_2.jpg" alt="人气大师任务平台">
           <div class="ewm" v-show="showEwm">
@@ -197,7 +199,7 @@
         }
         this.$axios.$post(`${this.$store.state.baseUrl}login `,this.getParams()).then((res) => {
           if (res.code == 200) {
-            this.$router.replace('/home')
+            location.replace('/home')
           } else {
             this.$message.error(res.msg)
           }
@@ -205,7 +207,6 @@
       }
     },
     mounted () {
-      this.$message.success('woshisis')
     }
   }
 </script>
@@ -238,12 +239,16 @@
         border-radius: 4px;
         box-shadow: 1px 1px 1px #f8f8f8;
         background-color: #fff;
+        .label{
+          display: inline-block;
+          min-width: 45px;
+        }
         li{
           position: relative;
           padding: 18px 10px 10px 0;
           border-bottom: 1px solid #ecebeb;
           input{
-            width: 300px;
+            width: 280px;
             border: none;
             outline: none;
             padding: 10px 30px;

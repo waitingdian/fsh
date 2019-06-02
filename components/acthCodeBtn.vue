@@ -29,7 +29,9 @@
     },
     computed: {
       disabled () {
-        return !this.phone || !this.phone.match(/^1[345789]{1}[0-9]{9}$/) || this.intervalIndex
+        console.log(111)
+        console.log(!this.phone || !this.phone.match(/^1[345789]{1}[0-9]{9}$/) || this.intervalIndex)
+        return !this.phone || !this.phone.match(/^1[345789]{1}[0-9]{9}$/)
       }
     },
     methods: {
