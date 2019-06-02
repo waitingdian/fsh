@@ -5,10 +5,13 @@
       <div class="left f-pr">
         <img class="avator" src="http://pic75.nipic.com/file/20150821/9448607_145742365000_2.jpg" alt="">
         <div class="detail fsh-f-222">
-          <p>用户名: {{userInfo.name}}</p>
-          <p>可用积分: {{userInfo.integral}}</p>
-          <p>用户等级: {{userInfo.level}}</p>
-          <p>我的用户数: {{userInfo.user}}</p>
+          <p>用户名: {{ userInfo.username }}</p>
+          <p>可用积分: {{ userInfo.credit }}</p>
+          <p>用户等级:
+            <span v-if="userInfo.role == 0">普通用户</span>
+            <span v-if="userInfo.role == 1">会员</span>
+          </p>
+          <p>我的用户数: {{ userInfo.count }}</p>
         </div>
       </div>
       <div class="right">
@@ -18,15 +21,30 @@
     </div>
     <div class="news">
       <h6 class="f-fs18 p-b-20">最新公告</h6>
-      <p class="p-b-10" v-for="item in newsList">
+      <p v-for="item in newsList"
+         class="p-b-10"
+         v-loading="loading"
+         @click="getDetail(item)">
         <i class="iconfont">&#xe630;</i>{{ item.title }}
-        <span class="p-l-25">{{item.date}}</span>
+        <span class="p-l-25">{{ item.created_time }}</span>
+        <span class="iconfont f-csp p-l-15">&#xe6dd;</span>
       </p>
     </div>
+    <el-dialog
+      class="detail-dialog"
+      :title="detailInfo.title"
+      :visible.sync="dialogVisible">
+      <p></p>
+      <div v-html="detailInfo.content"></div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
   import Nav from '@/components/Nav'
+
   export default {
     name: 'userinfo',
     components: {
@@ -34,33 +52,56 @@
     },
     data() {
       return {
+        dialogVisible: false,
+        loading: false,
         navs: [
           {title: '个人中心', link: ''},
         ],
         userInfo: {
-          name: '某某某',
-          integral: 118,
-          level: 'VIP1用户',
-          user: 888
         },
-        newsList: [
-          {
-            title: '公共哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈',
-            date: '2019-05-05'
-          },
-          {
-            title: '公共哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈',
-            date: '2019-05-05'
-          },
-          {
-            title: '公共哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈',
-            date: '2019-05-05'
-          }
-        ]
+        newsList: [],
+        detailInfo: {}
       }
     },
-    methods: {},
+    methods: {
+      getUserInfo () {
+        this.$axios.$get(`${this.$store.state.baseUrl}user/info `).then((res) => {
+          if (res.code == 200) {
+            this.userInfo = res.data
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      },
+      getNewsList () {
+        this.loading = true
+        this.$axios.$get(`${this.$store.state.baseUrl}announcement/list`).then((res) => {
+          this.loading = false
+          if (res.code == 200) {
+            this.newsList = res.data.items
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          this.loading = false
+        })
+      },
+      getDetail (item) {
+        this.$axios.$get(`${this.$store.state.baseUrl}announcement/detail/${item.id}`).then((res) => {
+          if (res.code == 200) {
+            this.detailInfo = res.data
+            this.dialogVisible = true
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          this.loading = false
+        })
+      }
+    },
     mounted () {
+      this.getUserInfo()
+      this.getNewsList()
     }
   }
 </script>
@@ -97,6 +138,9 @@
     img{
       width: 145px;
       height: 145px;
+    }
+    .detail-dialog{
+      width: 520px;
     }
   }
   .news{

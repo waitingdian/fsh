@@ -40,15 +40,33 @@ module.exports = {
   */
   plugins: [
     // {src: "~/plugins/element-ui.js", ssr: true},
-    { src: '~/plugins/element-ui', ssr: false},
+    { src: '~/plugins/element-ui', ssr: true},
     // { src: '~/plugins/qrcode', ssr: false},
+    { src: '@/plugins/axios', ssr: false }
   ],
 
   /*
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
+  axios: {
+    // See https://github.com/nuxt-community/axios-module#options
+    baseURL: (process.env.NODE_ENV === "production" || process.env.NODE_ENV === 'prev') ? "" : "http://192.168.24.51:20230/",
+    withCredentials: true,
+    proxy: process.env.NODE_ENV !== 'production'
+  },
+  proxy: {
+    '/api/': {
+      target: 'http://47.105.221.99:8081/', // 代理地址
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api': '' //将 /api 替换掉
+      }
+    }
+  },
 
   /*
   ** Build configuration

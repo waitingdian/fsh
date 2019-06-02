@@ -21,19 +21,20 @@
         <ul>
           <li>
             <span class="f-fs16">账号</span>
-            <input type="text" v-model="loginForm.userName" placeholder="请输入绑定手机号">
-            <p class="error-txt"></p>
+            <input type="text" @change="phoneError=''" maxlength="11" v-model="loginForm.userName" placeholder="请输入绑定手机号">
+            <p class="error-txt" v-show="phoneError">{{ phoneError }}</p>
           </li>
           <li>
             <span class="f-fs16">密码</span>
-            <input type="text" v-model="loginForm.passWord" placeholder="请输入登录密码">
+            <input type="text" @change="passError=''" maxlength="16" v-model="loginForm.passWord" placeholder="请输入登录密码">
+            <p class="error-txt" v-show="passError" >{{ passError }}</p>
           </li>
-          <p class="p-t-15 clearfix">
+          <p class="p-t-25 clearfix">
             <span class="remember">记住我</span>
             <span class="forget f-fr">忘记密码</span>
           </p>
           <no-ssr>
-            <el-button style="width: 100%;margin-top:40px;" @click="submintForm" type="primary">登录</el-button>
+            <el-button style="width: 100%;margin-top:40px;" @click="login" type="primary">登录</el-button>
           </no-ssr>
           <p class="p-t-20 f-tar">没有账号? <span class="fsh-f-c f-csp">立即注册&#xe70b;</span></p>
         </ul>
@@ -149,7 +150,6 @@
   </div>
 </template>
 <script>
-  import {login} from '@/pages/api/user'
   export default {
     name: 'login',
     components: {
@@ -170,7 +170,9 @@
           passWord: ''
         },
         showEwm: false,
-        loading: false
+        loading: false,
+        phoneError: '',
+        passError: ''
       }
     },
     methods: {
@@ -180,32 +182,26 @@
           password: this.loginForm.passWord
         }
       },
-      async getAdminList() {
-        this.loading = true
-        let res = await getAdminList(this.queryParams)
-        this.tableData = res.data.list
-        this.PAGINATION.total = res.data.count
-        this.loading = false
-      },
-      async login() {
-        this.loading = true
-        let res = await login(this.queryParams)
-        this.loading = false
-      },
-      submintForm () {
-        console.log('111')
-        console.log(this.loginForm.userName)
-        if (!this.loginForm.userName) {
-          this.errorUser.text = '请输入账号'
+      login () {
+        if (!this.loginForm.userName || this.loginForm.userName.length != 11) {
+          this.phoneError = '请输入正确用户名'
           return false
         }
-        console.log('111')
         if (!this.loginForm.passWord) {
-          this.errorPass.text = '请输入密码'
+          this.passError = '请输入密码'
           return false
         }
-        console.log('111')
-        this.login()
+        if (this.loginForm.userName.length < 6) {
+          this.passError = '请输入6-16位密码'
+          return false
+        }
+        this.$axios.$post(`${this.$store.state.baseUrl}login `,this.getParams()).then((res) => {
+          if (res.code == 200) {
+            this.$router.replace('/home')
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
       }
     },
     mounted () {
@@ -233,11 +229,11 @@
       .login-container{
         position: absolute;
         z-index: 2;
-        top: 7%;
+        top: 20px;
         right: 10%;
         padding: 35px;
         width: 420px;
-        height: 80%;
+        height: 420px;
         min-height: 430px;
         border-radius: 4px;
         box-shadow: 1px 1px 1px #f8f8f8;
@@ -250,13 +246,7 @@
             width: 300px;
             border: none;
             outline: none;
-            padding: 15px 30px;
-          }
-          .error-txt{
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            color: #ff0000;
+            padding: 10px 30px;
           }
         }
       }

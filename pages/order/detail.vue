@@ -3,17 +3,19 @@
     <Nav :navs="navs"></Nav>
     <div class="content">
       <div class="left">
-        <p>订单号: </p>
-        <p>下单数量: </p>
-        <p>初始数量:</p>
-        <p>状态:</p>
-        <p>创建时间:</p>
+        <p>订单号: {{ detailInfo.oid }}</p>
+        <p>下单数量: {{ detailInfo.num }}</p>
+        <p>退单数量数量: {{ detailInfo.tnum }}</p>
+        <p>状态: {{ detailInfo.status }}</p>
+        <p>下单时间: {{ detailInfo.createdTime }}</p>
       </div>
       <div>
-        <p>视频ID:</p>
-        <p>已刷数量</p>
-        <p>当前数量</p>
-        <p>备注</p>
+        <p>渠道名称: {{ detailInfo.oid }}</p>
+        <p>视频ID: {{ detailInfo.id }}</p>
+        <p>下单金额: {{ detailInfo.orderPrice }}</p>
+        <p>当前数量: {{ detailInfo.nowNum }}</p>
+        <p>初始数量: {{ detailInfo.startNum }}</p>
+        <p v-show="detailInfo.remark">备注: {{ detailInfo.remark }}</p>
       </div>
     </div>
   </div>
@@ -35,11 +37,27 @@
           {name: '全部',value: 1},
           {name: '快手点赞',value: 2},
           {name: '抖音评论',value: 3}
-        ]
+        ],
+        detailInfo: {}
       }
     },
-    methods: {},
+    methods: {
+      getOrderDetail (id) {
+        this.loading = true
+        this.$axios.$get(`${this.$store.state.baseUrl}order/detail/${id}`).then((res) => {
+          this.loading = false
+          if (res.code == 200) {
+            this.detailInfo = res.data || {}
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          this.loading = false
+        })
+      }
+    },
     mounted () {
+      this.getOrderDetail(this.$route.query.orderId)
     }
   }
 </script>

@@ -8,21 +8,11 @@
             <el-form ref="form" :inline="true" :model="form" label-width="80px">
               <p class="p-t-25 f-fwb p-b-10">选择平台 <i class="el-icon-arrow-right"></i></p>
               <el-form-item label="选择平台">
-                <el-select v-model="form.platform" placeholder="请选择平台">
-                  <el-option v-for="item in platformList"
-                             :key="item.value"
+                <el-select v-model="form.platform" @change="choosePlatform" placeholder="请选择平台">
+                  <el-option v-for="item in productList"
+                             :key="item.gid"
                              :label="item.name"
-                             :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <p class="p-t-25 f-fwb p-b-10">选择平台 <i class="el-icon-arrow-right"></i></p>
-              <el-form-item label="选择平台">
-                <el-select v-model="form.platform" placeholder="请选择平台">
-                  <el-option v-for="item in platformList"
-                             :key="item.value"
-                             :label="item.name"
-                             :value="item.value">
+                             :value="item.gid">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -35,41 +25,47 @@
         </div>
       </div>
       <div class="p-t-30 p-l-15">
+        <!--左下-->
         <div class="bot-left f-pr">
           <p class="f-fs18 p-b-20">商品信息</p>
-          <p class="p-b-10">商品编号: </p>
-          <p class="p-b-10">余额: </p>
-          <p class="p-b-10">单价: </p>
-          <p class="p-b-10">简介: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis</p>
+          <p class="p-b-15">商品编号: {{ detailInfo.gid }}</p>
+          <p class="p-b-15">余额: {{ userInfo.credit }}</p>
+          <p class="p-b-15">单价: {{ detailInfo.price }}</p>
+          <p class="p-b-15">会员单价: {{ detailInfo.member_price }}</p>
         </div>
+        <!--右下-->
         <div class="bot-right p-l-40">
           <p class="f-fs18 p-b-20">下单</p>
           <no-ssr>
-            <el-form ref="form" :model="sizeForm" label-width="110px" size="mini">
-              <el-form-item label="商品编号">
-                <template></template>
-              </el-form-item>
-              <el-form-item label="抖音视频ID">
-                <el-input v-model="sizeForm.name" placeholder="请输入抖音视频ID"></el-input>
-              </el-form-item>
-              <el-form-item label="视频短链接地址">
-                <el-input v-model="sizeForm.name" placeholder="请输入视频短链接地址"></el-input>
-              </el-form-item>
-              <el-form-item label="单价">
-                <el-input v-model="sizeForm.name" placeholder="请输入单价">
-                  <template slot="append">元</template>
+            <el-form ref="orderForm"
+                     :model="orderForm"
+                     label-width="110px"
+                     v-loading="loading"
+                     size="mini">
+              <el-form-item v-for="(item,index) in orderForm.labels"
+                            :label="item.name"
+                            :key="item.id"
+                            :prop="'labels.' + index + '.value'"
+                            :rules="{required: true, message: '请输入', trigger: 'blur'}">
+                <el-input v-model="item.value"
+                          :placeholder="item.palceholder">
                 </el-input>
               </el-form-item>
               <el-form-item label="下单数量">
-                <el-input-number v-model="sizeForm.name" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
+                <el-input-number v-model="orderForm.count"
+                                 @change="changeCount"
+                                 :step="detailInfo.rate"
+                                 :min="orderForm.limitMin"
+                                 :max="orderForm.limitMax"
+                                 label="描述文字">
+                </el-input-number>
               </el-form-item>
               <el-form-item label="总价">
-                <el-input v-model="sizeForm.name">
-                  <template slot="append">元</template>
-                </el-input>
+                <template><span class="member-price">{{ vipTotalPrice }} 元</span><span style="color: #ccc;" class="f-tdlh f-fs12 p-l-15">{{ totalPrice }}</span></template>
+                <p class="f-fs12">会员已节省 10元</p>
               </el-form-item>
               <div class="f-tac">
-                <el-button style="width: 60%" type="primary">下单</el-button>
+                <el-button style="width: 60%" @click="submitForm('orderForm')" type="primary">下单</el-button>
               </div>
             </el-form>
           </no-ssr>
@@ -90,29 +86,122 @@
         navs: [
           {title: '发布任务', link: ''}
         ],
-        platformList: [
-          {name: 'pingtai1', value: 1},
-          {name: 'pingtai2', value: 2},
-          {name: 'pingtai3', value: 3}
-        ],
-        typeList: [
-          {name: 'pingtai1', value: 1},
-          {name: 'pingtai2', value: 2},
-          {name: 'pingtai3', value: 3}
-        ],
+        loading: false,
+        productList: [],
         form: {
-          platform: '',
-          type: ''
+          platform: ''
         },
-        sizeForm: {}
+        orderForm: {
+          count: 0,
+          labels: []
+        },
+        limit: 500,   // 当前页数不分页默认写了500
+        detailInfo: {
+          labels: []
+        },
+        userInfo: {}
       }
     },
     methods: {
-      handleChange(value) {
-        console.log(value);
+      changeCount(value) {
+        if (value < this.orderForm.limitMin) {
+          this.$message.error(`下单数量无效,不能小于${this.orderForm.limitMin}`)
+        }
+        if (value > this.orderForm.limitMax) {
+          this.$message.error(`下单数量无效,不能大于${this.orderForm.limitMax}`)
+        }
+        if(value && value % this.detailInfo.rate!=0){
+          this.$message.error(`下单数量无效,请输入${this.detailInfo.rate}的倍数`)
+        }
+      },
+      getProductList () {
+        this.$axios.$get(`${this.$store.state.baseUrl}product/list?limit=${this.limit}`).then((res) => {
+          this.loading = false
+          if (res.code == 200) {
+            this.productList = res.data.items
+            this.form.platform = res.data.items[0].gid
+            this.getProductDetail(this.form.platform)
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          this.loading = false
+        })
+      },
+      choosePlatform () {
+        this.getProductDetail(this.form.platform)
+      },
+      getProductDetail (id) {
+        this.loading = true
+        this.$axios.$get(`${this.$store.state.baseUrl}product/detail/${id}`).then((res) => {
+          this.loading = false
+          if (res.code == 200) {
+            let labels = []
+            res.data.inputs.forEach((item) => {
+              let obj = {value: '', name: item[0], palceholder:item[1], id: item[2]}
+              labels.push(obj)
+            })
+            this.orderForm.labels = labels
+            this.detailInfo = res.data
+            this.orderForm.count = res.data.limit_min
+            this.orderForm.limitMin = res.data.limit_min
+            this.orderForm.limitMax = res.data.limit_max
+
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          this.loading = false
+        })
+      },
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            if (this.orderForm.count <= 0) {
+              this.$message.error('下单数量无效,请重选输入')
+              return false
+            }
+            if(this.orderForm.count && this.orderForm.count % this.detailInfo.rate!=0){
+              this.$message.error(`下单数量无效,请输入${this.detailInfo.rate}的倍数`)
+              return false
+            }
+            let inputs = this.orderForm.labels.map((item) => {
+              return item.value
+            })
+            let params = {gid: this.form.platform, num: this.orderForm.count, inputs: inputs}
+            this.addOrder(params)
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      addOrder (params) {
+        this.loading = true
+        this.$axios.$post(`${this.$store.state.baseUrl}order/add`, params).then((res) => {
+          this.loading = false
+          if (res.code == 200) {
+            location.href='/order'
+            // this.$router.push('/order')
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          this.loading = false
+        })
       }
     },
     mounted () {
+      this.getProductList()
+      this.userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    },
+    computed: {
+      totalPrice (){
+        return this.orderForm.count * this.detailInfo.price
+      },
+      vipTotalPrice (){
+        return this.orderForm.count * this.detailInfo.member_price
+      }
     }
   }
 </script>
@@ -154,6 +243,9 @@
       }
       .bot-right{
         width: 405px;
+      }
+      .member-price{
+        color: #ff0000;
       }
     }
   }
