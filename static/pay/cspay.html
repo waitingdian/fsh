@@ -21,12 +21,16 @@
 
               <tr>
                 <td><div align="right">类型：</div></td>
-                <td id="typs"><label ><div class="paytyp alipay"><input name="typs" type="radio" value="1" >支付宝转账</div></label><label ><div class="paytyp alipay"><input name="typs" type="radio" value="2" >支付宝扫码</div></label><label ><div class="paytyp tenpay"><input name="typs" type="radio" value="3" >财付通支付</div></label><label ><div class="paytyp mqqpay"><input name="typs" type="radio" value="4" >手机QQ扫码</div></label><label ><div class="paytyp wxpay"><input name="typs" type="radio" value="5" >微信扫码</div></label>
-
-</td>
+                <td id="typs">
+                  <label >
+                    <div class="paytyp alipay">
+                      <input name="typs" type="radio" value="2" >支付宝扫码
+                    </div>
+                  </label>
+                </td>
               </tr><tr>
                 <td><div align="right"></div></td>
-                <td><form name="form1" id="form1" method="get" target="_blank" action="http://pay2.fensibox.com/pay/pay.php?appid=2019060258&payno=15138900902&money=1&typ=2&submit=%E6%94%AF%E4%BB%98%E5%AE%9D%E6%89%AB%E7%A0%81&back_url=/recharge/record" onsubmit="return checkform();">
+                <td><form name="form1" id="form1" method="get" target="_blank" action="http://pay.fensibox.com/pay/pay.php?appid=2019060258&payno=15138900902&money=1&typ=2&submit=%E6%94%AF%E4%BB%98%E5%AE%9D%E6%89%AB%E7%A0%81&back_url=/recharge/record" onsubmit="return checkform();">
 
                 <input name="appid" type="hidden" id="appid" value="您的扫码应用APPID">
 				<input name="payno" type="hidden" id="payno" value="用户付款说明">

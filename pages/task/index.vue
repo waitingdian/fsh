@@ -60,9 +60,11 @@
                                  label="描述文字">
                 </el-input-number>
               </el-form-item>
-              <el-form-item label="总价">
-                <template><span class="member-price">{{ vipTotalPrice }} 元</span><span style="color: #ccc;" class="f-tdlh f-fs12 p-l-15">{{ totalPrice }}</span></template>
-                <p class="f-fs12">会员已节省 10元</p>
+              <el-form-item label="总计" class="m-b-5">
+                  <span style="color: #ccc;" class="f-fs12 p-l-15">{{ totalPrice }} 积分</span>
+              </el-form-item>
+              <el-form-item label="会员总计">
+                  <span class="member-price">{{ vipTotalPrice }} 积分</span>
               </el-form-item>
               <div class="f-tac">
                 <el-button style="width: 60%" @click="submitForm('orderForm')" type="primary">下单</el-button>
@@ -197,10 +199,10 @@
     },
     computed: {
       totalPrice (){
-        return this.orderForm.count * this.detailInfo.price
+        return (this.orderForm.count * (this.detailInfo.price*1000000))/1000000
       },
       vipTotalPrice (){
-        return this.orderForm.count * this.detailInfo.member_price
+        return (this.orderForm.count * (this.detailInfo.member_price*1000000))/1000000
       }
     }
   }
@@ -209,31 +211,31 @@
   .task{
     background-color: #fff;
     .content{
-      padding: 26px 32px;
+      padding:0px 32px 26px 32px;
       color: #222;
       >div{
         display: flex;
       }
       .left{
         width: 412px;
-        height: 340px;
+        height: 290px;
         border-bottom: 1px dotted #8d8b8c;
       }
       .left,.bot-left{
         &:after{
           position: absolute;
-          top: 0;
+          top: 35px;
           right: 0;
           content: '';
           width: 1px;
-          height: 260px;
+          height: 220px;
           background-color: #d6d6d6;
         }
       }
       .right{
         width: 420px;
-        height: 340px;
-        padding: 72px 45px;
+        height: 290px;
+        padding: 35px 45px;
         line-height: 1.5;
         border-bottom: 1px dotted #8d8b8c;
       }

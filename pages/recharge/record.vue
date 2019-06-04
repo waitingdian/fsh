@@ -65,6 +65,9 @@
           <el-table-column
             prop="address"
             label="状态">
+            <template slot-scope="scope">
+              <span v-for="item in typeList" v-if="item.value == scope.row.status">{{ item.name }}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="address"
@@ -113,9 +116,14 @@
           {title: '充值记录', link: ''},
         ],
         typeList: [
-          {name: '全部',value: 1},
-          {name: '待支付',value: 2},
-          {name: '已支付',value: 3}
+          {name: '全部',value: ''},
+          {name: '待处理',value: 0},
+          {name: '处理中',value: 1},
+          {name: '退单中',value: 2},
+          {name: '有异常',value: 3},
+          {name: '补单中',value: 4},
+          {name: '已更新',value: 5},
+          {name: '已完成',value: 90}
         ],
         rechargeForm: {
           type: '',

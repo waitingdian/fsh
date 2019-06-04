@@ -3,7 +3,7 @@
     <Nav :navs="navs"></Nav>
     <div class="info">
       <div class="left f-pr">
-        <img class="avator" src="http://pic75.nipic.com/file/20150821/9448607_145742365000_2.jpg" alt="">
+        <img class="avator" src="~/static/image/avator.png" alt="">
         <div class="detail fsh-f-222">
           <p>用户名: {{ userInfo.username }}</p>
           <p>可用积分: {{ userInfo.credit }}</p>
@@ -16,7 +16,7 @@
       </div>
       <div class="right">
         <p class="p-b-15">客服微信号</p>
-        <img src="http://pic75.nipic.com/file/20150821/9448607_145742365000_2.jpg" alt="">
+        <img src="~/static/image/weixin.jpg" alt="">
       </div>
     </div>
     <div class="news">

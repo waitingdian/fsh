@@ -9,7 +9,7 @@
     <section class="f-pr">
       <div class="banner">
         <no-ssr>
-          <el-carousel trigger="click">
+          <el-carousel height="440px" trigger="click">
             <el-carousel-item v-for="item in carouselList" :key="item.id">
               <img :src="item.url" alt="">
             </el-carousel-item>
@@ -140,10 +140,10 @@
         <span class="f-ib f-vam">客服中心</span>
         <span class="line f-ib f-vam iconfont">&#xe63a;</span>
         <span class="f-ib f-vam f-pr" @mouseenter="showEwm = true" @mouseleave="showEwm = false">
-         <img src="http://pic40.nipic.com/20140412/18428321_144447597175_2.jpg" alt="人气大师任务平台">
+         <img src="~/static/image/weixin.jpg" alt="人气大师任务平台">
           <div class="ewm" v-show="showEwm">
-            <img src="http://pic40.nipic.com/20140412/18428321_144447597175_2.jpg" alt="">
-            <p class="fsh-f-c p-t-5">扫一扫关注哦</p>
+            <img src="~/static/image/weixin.jpg" alt="">
+            <p class="fsh-f-c p-t-5">扫一扫添加</p>
           </div>
         </span>
       </div>
@@ -234,8 +234,7 @@
         right: 10%;
         padding: 35px;
         width: 420px;
-        height: 420px;
-        min-height: 430px;
+        height: 412px;
         border-radius: 4px;
         box-shadow: 1px 1px 1px #f8f8f8;
         background-color: #fff;
@@ -245,7 +244,7 @@
         }
         li{
           position: relative;
-          padding: 18px 10px 10px 0;
+          padding: 18px 10px 15px 0;
           border-bottom: 1px solid #ecebeb;
           input{
             width: 280px;

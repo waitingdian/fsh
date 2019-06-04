@@ -67,6 +67,15 @@ module.exports = {
       }
     }
   },
+  router: {
+    extendRoutes (routes, resolve) {
+      routes.push({
+        name: 'login',
+        path: '*',
+        component: resolve(__dirname)
+      })
+    }
+  },
 
   /*
   ** Build configuration

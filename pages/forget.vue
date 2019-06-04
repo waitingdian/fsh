@@ -9,7 +9,7 @@
     <section class="f-pr">
       <div class="banner">
         <no-ssr>
-          <el-carousel trigger="click">
+          <el-carousel height="440px" trigger="click">
             <el-carousel-item v-for="item in carouselList" :key="item.id">
               <img :src="item.url" alt="">
             </el-carousel-item>
@@ -47,7 +47,7 @@
           <no-ssr>
             <el-button style="width: 100%;margin-top:40px;" @click="editPwd" type="primary">保存</el-button>
           </no-ssr>
-          <p class="p-t-20 f-tar"><span class="fsh-f-c f-csp iconfont">立即登录 <span class="f-fs12">&#xe70b;</span> </span></p>
+          <p class="p-t-20 f-tar"><a class="fsh-f-c f-csp iconfont" href="/login">立即登录 <span class="f-fs12">&#xe70b;</span> </a></p>
         </ul>
       </div>
       <article class="article1 f-tac p-t-60 p-b-70">
@@ -149,10 +149,10 @@
         <span class="f-ib f-vam">客服中心</span>
         <span class="line f-ib f-vam iconfont">&#xe63a;</span>
         <span class="f-ib f-vam f-pr" @mouseenter="showEwm = true" @mouseleave="showEwm = false">
-         <img src="http://pic40.nipic.com/20140412/18428321_144447597175_2.jpg" alt="人气大师任务平台">
+         <img src="~/static/image/weixin.jpg" alt="人气大师任务平台">
           <div class="ewm" v-show="showEwm">
-            <img src="http://pic40.nipic.com/20140412/18428321_144447597175_2.jpg" alt="">
-            <p class="fsh-f-c p-t-5">扫一扫关注哦</p>
+            <img src="~/static/image/weixin.jpg" alt="">
+            <p class="fsh-f-c p-t-5">扫一扫添加</p>
           </div>
         </span>
       </div>

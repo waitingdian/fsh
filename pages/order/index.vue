@@ -49,9 +49,11 @@
             width="120">
           </el-table-column>
           <el-table-column
-            prop="status"
             label="订单状态"
             width="100">
+            <template slot-scope="scope">
+              <span v-for="item in typeList" v-if="item.value == scope.row.status">{{ item.name }}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="num"
@@ -115,17 +117,17 @@
         ],
         loading: false,
         typeList: [
-          {name: '全部',value: 1},
-          {name: '快手点赞',value: 2},
-          {name: '抖音评论',value: 3}
+          {name: '全部',value: ''},
+          {name: '待处理',value: 0},
+          {name: '处理中',value: 1},
+          {name: '退单中',value: 2},
+          {name: '有异常',value: 3},
+          {name: '补单中',value: 4},
+          {name: '已更新',value: 5},
+          {name: '已完成',value: 90}
         ],
         searchForm: {
-          type: '',
-          number: '',
-          videoId: ''
-        },
-        searchForm: {
-          status: 0,
+          status: '',
           periodStart: '',
           periodEnd: ''
         },
@@ -139,8 +141,8 @@
     },
     methods: {
       goDetail (id) {
-        // location.href = `order/detail?orderId=${id}`
-        this.$router.push({path: 'order/detail', query: {orderId: id}})
+        location.href = `order/detail?orderId=${id}`
+        // this.$router.push({path: 'order/detail', query: {orderId: id}})
       },
       handleCurrentChange (val) {
         console.log(val)

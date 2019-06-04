@@ -6,7 +6,7 @@
           <i class="iconfont f-fs28 f-vam">&#xe649;</i>
           <span class="f-vam">积分: {{ userInfo.credit }}</span>
         </div>
-        <div class="item p-r-35">
+        <div class="item p-r-35" @click="goRecharge">
           <i class="iconfont f-fs24 f-vam" style="font-size: 24px">&#xe604;</i>
           <span class="f-vam">充值</span>
         </div>
@@ -55,6 +55,9 @@
         setTimeout(() => {
           location.replace('/login')
         }, 500)
+      },
+      goRecharge () {
+        location.href = "/recharge"
       }
     },
     mounted () {
